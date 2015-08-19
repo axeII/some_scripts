@@ -10,6 +10,7 @@ myDir = "/Volumes/Macintosh\ SD/Movies/iTunes\ Movies/"
 parser = optparse.OptionParser()
 parser.addOption('-d','--destination',dest='destination', help='Place to save file')
 
+#other options
 (options,args) = parser.parser_args()
 
 if options.destination is None:
@@ -31,6 +32,7 @@ def checkFile(_file):
        else:
            return False
 
+#this function is not needed -- delete probably
 def checkDir(_dir):
     if (os.path.isdir(_dir)):
         return True
@@ -53,10 +55,11 @@ def findFile(arguments):
 
 # main code
 
-if len(sys.arg[1:]) >= 2 or len(sys.argv[1:]) >= 1:
-     soubor = findFile
+if len(sys.argv[1:]) >= 2 or len(sys.argv[1:]) >= 1:
+     soubor = findFile(sys.argv[1:])
      if soubor != "":
-         mv(soubor,destination)
+         mv(soubor,options.destination)
+         ln(soubor,options.destination)
      else:
          print "File not found"
          sys.exit(0)
