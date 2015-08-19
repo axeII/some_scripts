@@ -44,13 +44,22 @@ def ln(src,dst):
         print "Link is broken"
         sys.exit(0)
 
+def findFile(arguments):
+    fileName = ""
+    for argu in arguments:
+        if checkFile(argu):
+            fileName = str(argu)
+    return fileName
+
 # main code
 
- if len(sys.arg[1:]) >= 2 or len(sys.argv[1:]) >= 1:
-     if checkFile(sys.argv[2]):
+if len(sys.arg[1:]) >= 2 or len(sys.argv[1:]) >= 1:
+     soubor = findFile
+     if soubor != "":
          mv(soubor,destination)
      else:
-         mv(soubor,destination)
+         print "File not found"
+         sys.exit(0)
 else:
-  print"File is not mp4 format"
+  print "File not found or wrong dir "
   sys.exit(0)
