@@ -31,27 +31,7 @@ def ln(src,dst):
 
 # main code
 
-if len(sys.arg) >= 1:
-    if type(sys.argv[1]) is string:
-        soubor = sys.argv[1]
-    else:
-        print "File not found"
-        sys.exit(0)
-        #print "File name not found Exit? Y|n"
-        #soubor = raw_input('Enter file name')
-elif len(sys.argv) >= 2:
-  dirr = sys.argv[2]
-elif len(sys.argv) >= 3:
-    soubor = sys.argv[1]
-    dirr = sys.argv[2]
-    if sys.argv[3] == "-d":
-        #spcialni volba
-else:
-    #prit else statment
-#............................
-
-# other code - maintance need
- ''' if soubor.endswith(".mp4"):
+ if soubor.endswith(".mp4"):
   if len(sys.arg) > 1:
    destination = sys.arg[2]
    if (os.path.isdir(destination)):
@@ -64,4 +44,3 @@ else:
  else:
   print"File is not mp4 format"
   sys.exit(0)
-'''
