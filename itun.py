@@ -32,7 +32,7 @@ def checkFile(_file):
        else:
            return False
 
-#this function is not needed -- delete probably
+#this function maybe not needed
 def checkDir(_dir):
     if (os.path.isdir(_dir)):
         return True
@@ -57,7 +57,7 @@ def findFile(arguments):
 
 if len(sys.argv[1:]) >= 2 or len(sys.argv[1:]) >= 1:
      soubor = findFile(sys.argv[1:])
-     if soubor != "":
+     if soubor != "" and checkDir(options.destination):
          mv(soubor,options.destination)
          ln(soubor,options.destination)
      else:
