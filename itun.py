@@ -2,66 +2,67 @@
 
 import shutil
 import sys
+import optparse
 
 # default paths ...
 movieDir = "~/Music/iTunes/iTunes\ Media/Movies/"
 myDir = "/Volumes/Macintosh\ SD/Movies/iTunes\ Movies/"
+parser = optparse.OptionParser()
+parser.addOption('-d','--destination',dest='destination', help='Place to save file')
 
-# procedure mv fileA to directory as fileB
-def mv(fileA,fileB):
- if os.path.exits(fileA):
-   shutil.move(fileA,fileB)
- else:
-   print "File not found!"
-   sys.exit(0)
+#other options
+(options,args) = parser.parser_args()
 
-def checkFile(fil):
-  if fil.endswith(".mp4"):
-	return True
-  else:
-	return False
+if options.destination is None:
+    options.destination = myDir
 
-# procedure ln to create symbolic link
+sayWhat = 'file will be saved to ' + myDir
+
+# function list
+def mv(pathFile,pathTo):
+    if os.path.exits(pathFile):
+        shutil.move(pathFile,pathTo)
+    else:
+        print "File not found!"
+        sys.exit(0)
+
+def checkFile(_file):
+    if _file.endswith(".mp4"):
+	       return True
+       else:
+           return False
+
+#this function maybe not needed
+def checkDir(_dir):
+    if (os.path.isdir(_dir)):
+        return True
+    else:
+        return False
+
 def ln(src,dst):
-  if os.path.isdir(src) and os.path.isdir(dst):
-      os.symlink(src,dst)
- else:
-  print "Link is broken"
-  sys.exit(0)
+    if os.path.isdir(src) and os.path.isdir(dst):
+        os.symlink(src,dst)
+    else:
+        print "Link is broken"
+        sys.exit(0)
+
+def findFile(arguments):
+    fileName = ""
+    for argu in arguments:
+        if checkFile(argu):
+            fileName = str(argu)
+    return fileName
 
 # main code
 
-if len(sys.arg) >= 1:
-    if type(sys.argv[1]) is string:
-        soubor = sys.argv[1]
-    else:
-        print "File not found"
-        sys.exit(0)
-        #print "File name not found Exit? Y|n"
-        #soubor = raw_input('Enter file name')
-elif len(sys.argv) >= 2:
-  dirr = sys.argv[2]
-elif len(sys.argv) >= 3:
-    soubor = sys.argv[1]
-    dirr = sys.argv[2]
-    if sys.argv[3] == "-d":
-        #spcialni volba
+if len(sys.argv[1:]) >= 2 or len(sys.argv[1:]) >= 1:
+     soubor = findFile(sys.argv[1:])
+     if soubor != "" and checkDir(options.destination):
+         mv(soubor,options.destination)
+         ln(soubor,options.destination)
+     else:
+         print "File not found"
+         sys.exit(0)
 else:
-    #prit else statment
-#............................
-
-# other code - maintance need
- ''' if soubor.endswith(".mp4"):
-  if len(sys.arg) > 1:
-   destination = sys.arg[2]
-   if (os.path.isdir(destination)):
-     mv(soubor,destination)
-   else:
-     print "Directory dosnt exists"
-     sys.exit(0)
-  else:
-    mv(soubor,destination)
- else:
-  print"File is not mp4 format"
+  print "File not found or wrong dir "
   sys.exit(0)
-'''
