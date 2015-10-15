@@ -5,5 +5,5 @@ use to move any file to trash
 
 trash example.txt
 
-Output:
-Movig file example.txt to trash 
+Output:  
+```Movig file example.txt to trash```
