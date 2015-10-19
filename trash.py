@@ -26,4 +26,4 @@ for file_ in arguments:
 		report("folder",file_)
 	else:
 		report("file",file_)
-	move(os.path.abspath(file_),"/Users/Ales/.Trash/"+file_)
+	move(os.path.abspath(file_),"/Users/Ales/.Trash/" + os.path.basename(file_))
