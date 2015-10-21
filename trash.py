@@ -19,7 +19,10 @@ def move(from_,to_):
 			name = to_+str(number)
 			break
 
-	shutil.move(from_,name)
+	try:
+		shutil.move(from_,name)
+	except IOError as er:
+		print "Error: ",er
 
 for file_ in arguments:
 	if os.path.isdir(os.path.join(path_,file_)):
