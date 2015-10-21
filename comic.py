@@ -8,9 +8,11 @@ folders = sys.argv[1:]
 
 for folder in folders:
 	files = os.listdir(folder)
-	f = zipfile.ZipFile(folder + ".cbr","w")
+	name = os.path.basename(folder) + ".cbr"
+	f = zipfile.ZipFile("./" + name,"w")
 	for file_ in files:
-		print "Adding %s to %s.cbr " % (file_,folder)
-		f.write(os.path.abspath(folder+"/"+file_))
+		fileName = os.path.abspath(folder) + "/" + file_
+		print "Adding %s  to  %s" % (fileName, name)
+		f.write(fileName)
 	f.close()
-	
+
