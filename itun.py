@@ -1,68 +1,57 @@
 #!/usr/local/bin/python
-
-import shutil
 import sys
-import optparse
+import shutil
+import os
 
-# default paths ...
-movieDir = "~/Music/iTunes/iTunes\ Media/Movies/"
-myDir = "/Volumes/Macintosh\ SD/Movies/iTunes\ Movies/"
-parser = optparse.OptionParser()
-parser.addOption('-d','--destination',dest='destination', help='Place to save file')
+def notEmpty(*args):
+	what = False
+	for arg in args:
+		if arg != "":
+			what = True
+	return what
 
-#other options
-(options,args) = parser.parser_args()
+def isMovie(movie):
+	state = False
+	if os.path.isfile(movie) and movie.endswith("mp4"):
+		state = True
+	return state
 
-if options.destination is None:
-    options.destination = myDir
+def aprove(file_,destination):
+	if os.path.isfile(file_):
+		return True
+	else:
+		return False
 
-sayWhat = 'file will be saved to ' + myDir
+def create():
+	path = "/Volumes/Macintosh\ SD/Movies/iTunes\ Movies/"
+	choice = raw_input('Do you want set path?[yes/no]: ')
+	if choice == "yes" or choice == "y" or choice == "Y":
+		path = raw_input('Set path to move file: ')
+	return path			
 
-# function list
-def mv(pathFile,pathTo):
-    if os.path.exits(pathFile):
-        shutil.move(pathFile,pathTo)
-    else:
-        print "File not found!"
-        sys.exit(0)
+def move(what,where):
+	if aprove(what,where):		
+		print "%s to %s \nMoving..." % (what,where)
+		shutil.move(what,where)
 
-def checkFile(_file):
-    if _file.endswith(".mp4"):
-	       return True
-       else:
-           return False
+def link(src,dst):
+	if aprove(src,dst):	
+		print "Linking..."
+		os.symlink(src,dst)
 
-#this function maybe not needed
-def checkDir(_dir):
-    if (os.path.isdir(_dir)):
-        return True
-    else:
-        return False
+if __name__ == "__main__":
+	movies = sys.argv[1:]
+	if notEmpty(movies):
+		for movie in movies:
+			if isMovie(movie):
+				path = create()
+				move(os.path.abspath(movie),path+movie)
+				link(path+movie,os.path.abspath(movie))
+				print "I have successfuly itun " + movie		
+			else:
+				print "Not found " + movie
+	else:
+		print "Usage:\t itun movie.mp4 | movieTwo.mp4"
 
-def ln(src,dst):
-    if os.path.isdir(src) and os.path.isdir(dst):
-        os.symlink(src,dst)
-    else:
-        print "Link is broken"
-        sys.exit(0)
 
-def findFile(arguments):
-    fileName = ""
-    for argu in arguments:
-        if checkFile(argu):
-            fileName = str(argu)
-    return fileName
 
-# main code
-
-if len(sys.argv[1:]) >= 2 or len(sys.argv[1:]) >= 1:
-     soubor = findFile(sys.argv[1:])
-     if soubor != "" and checkDir(options.destination):
-         mv(soubor,options.destination)
-         ln(soubor,options.destination)
-     else:
-         print "File not found"
-         sys.exit(0)
-else:
-  print "File not found or wrong dir "
-  sys.exit(0)
