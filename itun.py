@@ -3,12 +3,9 @@ import sys
 import shutil
 import os
 
-def notEmpty(*args):
-	what = False
-	for arg in args:
-		if arg != "":
-			what = True
-	return what
+def isEmpty(args):
+	if not args:
+		return True
 
 def isMovie(movie):
 	state = False
@@ -23,7 +20,7 @@ def aprove(file_,destination):
 		return False
 
 def create():
-	path = "/Volumes/Macintosh\ SD/Movies/iTunes\ Movies/"
+	path = "/Volumes/Macintosh SD/Movies/iTunes Movies/"
 	choice = raw_input('Do you want set path?[yes/no]: ')
 	if choice == "yes" or choice == "y" or choice == "Y":
 		path = raw_input('Set path to move file: ')
@@ -41,7 +38,7 @@ def link(src,dst):
 
 if __name__ == "__main__":
 	movies = sys.argv[1:]
-	if notEmpty(movies):
+	if not isEmpty(movies):
 		for movie in movies:
 			if isMovie(movie):
 				path = create()
