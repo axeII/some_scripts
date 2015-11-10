@@ -4,6 +4,28 @@ import os
 import sys
 import zipfile
 
+images = ["jpg","jpeg","png","tiff","bmp"]
+
+def testFile(file_):
+	if os.path.isfile(file_) and file_[:-3].lower() in images:
+		return True
+	else:
+		return False
+
+def seraching(directory):
+	list_ = []
+	for dir_ in directory:
+		if testFile(dir_):
+			list_.add(dir_)	 
+		else:
+			seraching(dir_)
+	return list_
+
+def archive(list_):
+	
+# Coping image (1 of 100) to filenam1.cbr 	
+# Coping image (22 of 67) to filenam2.cbr
+
 if __name__ == "__main__":
 	if sys.argv[1] == "mode":
 		print "Entering comic mode..."
