@@ -8,7 +8,7 @@ images = ["jpg","jpeg","png","tiff","bmp"]
 incompatible = []
 
 def testFile(file_,folder):
-	if os.path.isfile(os.path.join(folder,file_)) and file_[-3:].lower() in images:
+	if os.path.isfile(os.path.join(folder,file_)) and file_.split('.')[-1].lower() in images:
 		return True
 	else:
 		return False
@@ -25,18 +25,22 @@ def serachFile(directory,dictionary):
 				if thing not in incompatible: incompatible.append(thing)
 	return dictionary	
 
-def printFile(fileX,nameX):
-	print "Adding %s to %s " % (fileX,nameX) #flash
+def printFile(what):
+	sys.stdout.write(what)
+	sys.stdout.flush()
 
-# Coping image (1 of 100) to filenam1.cbr 	
-# Coping image (22 of 67) to filenam2.cbr
+def shorte(word):
+	if len(word) > 7:
+		word = "_" + word[-7:]
+	return word
 
 def zipArchive(name,dictionary):
-	i = 0 
+	i = 1 
 	f = zipfile.ZipFile("./" + name,'w')
 	for dic in dictionary:
-		printFile(dic,name)
+		printFile("\rAdding %s ( %3s of %s) to %s" % (shorte(dic),i,len(dictionary),name))
 		f.write(dictionary[dic]+"/"+dic)
+		i += 1
 	f.close()
 
 def comicMode():
@@ -77,6 +81,6 @@ if __name__ == "__main__":
 				fileDic = serachFile(folder,fileDic)
 				name = os.path.basename(folder) + ".cbr"
 				zipArchive(name,fileDic)
-				print "Not compatible files: "
+				print "\nNot compatible files: "
 				for i in incompatible: print i
 
