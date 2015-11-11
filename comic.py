@@ -70,7 +70,7 @@ def comicMode():
 	
 if __name__ == "__main__":
 	if len(sys.argv[1:]) < 1:
-		print "navod"
+		print "comic \tmode | folder/s with images \nSupported types:  jpg,png,tiff,jpeg"
 	else:
 		if sys.argv[1] == "mode":
 			comicMode()
