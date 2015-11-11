@@ -81,6 +81,6 @@ if __name__ == "__main__":
 				fileDic = serachFile(folder,fileDic)
 				name = os.path.basename(folder) + ".cbr"
 				zipArchive(name,fileDic)
-				print "\nNot compatible files: "
-				for i in incompatible: print i
+			print "\nNot compatible files: "
+			for i in incompatible: print i
 
