@@ -41,6 +41,7 @@ def zipArchive(name,dictionary):
 		printFile("\rAdding %s ( %3s of %s) to %s" % (shorte(dic),i,len(dictionary),name))
 		f.write(dictionary[dic]+"/"+dic)
 		i += 1
+	print ""
 	f.close()
 
 def comicMode():
