@@ -5,41 +5,39 @@ import sys
 import zipfile
 
 images = ["jpg","jpeg","png","tiff","bmp"]
+incompatible = []
 
-def testFile(file_):
-	if os.path.isfile(file_) and file_[:-3].lower() in images:
+def testFile(file_,folder):
+	if os.path.isfile(os.path.join(folder,file_)) and file_[-3:].lower() in images:
 		return True
 	else:
 		return False
 
-def serachFile(directory,listX):
+def serachFile(directory,dictionary):
 	files = os.listdir(directory)
-	for dir_ in files:
-		if os.path.isdir(dir_):
-			serachFile(dir_,list_)
+	for thing in files:
+		if os.path.isdir(os.path.join(directory,thing)):
+			 serachFile(os.path.join(os.path.abspath(directory),thing),dictionary)
 		else:
-			for d in directory:
-				print d 
-				#newList = []
-				#if testFile(d):
-					#newList.append(d)	
-				#else:
-				#	print "File %s is not compatible..." % (dir_)
-			list_.append(newList)
+			if testFile(thing,directory):
+				dictionary[thing] = os.path.expandvars(os.path.realpath(directory))
+			else:	
+				if thing not in incompatible: incompatible.append(thing)
+	return dictionary	
 
 def printFile(fileX,nameX):
-	print "Adding %s to %s " % (fileX,nameX)
+	print "Adding %s to %s " % (fileX,nameX) #flash
 
-def archive(image):
-	return os.path.abspath(image)
+# Coping image (1 of 100) to filenam1.cbr 	
+# Coping image (22 of 67) to filenam2.cbr
 
-def zipArchive(name,folder,list_):
-	#f = zipfile.ZipFile("./" + name,'w')
-	finalList = map(archive,list_)
-	for fin in finalList:
-		printFile(fin,name)
-	#	f.write(fin)
-	#f.close()
+def zipArchive(name,dictionary):
+	i = 0 
+	f = zipfile.ZipFile("./" + name,'w')
+	for dic in dictionary:
+		printFile(dic,name)
+		f.write(dictionary[dic]+"/"+dic)
+	f.close()
 
 def comicMode():
 	print "Entering comic mode..."
@@ -66,9 +64,6 @@ def comicMode():
 			print "Wrong input.."
 
 	
-# Coping image (1 of 100) to filenam1.cbr 	
-# Coping image (22 of 67) to filenam2.cbr
-
 if __name__ == "__main__":
 	if len(sys.argv[1:]) < 1:
 		print "navod"
@@ -78,9 +73,10 @@ if __name__ == "__main__":
 		else:
 			folders = sys.argv[1:]
 			for folder in folders:
-				list_ = []
-				serachFile(folder,list_)
+				fileDic = {}
+				fileDic = serachFile(folder,fileDic)
 				name = os.path.basename(folder) + ".cbr"
-				print name, folder,list_
-				#zipArchive(name,folder,list_)
+				zipArchive(name,fileDic)
+				print "Not compatible files: "
+				for i in incompatible: print i
 
