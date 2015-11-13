@@ -70,9 +70,7 @@ def comicMode():
 
 	
 if __name__ == "__main__":
-	if len(sys.argv[1:]) < 1:
-		print "comic \tmode | folder/s with images \nSupported types:  jpg,png,tiff,jpeg"
-	else:
+	if len(sys.argv[1:]) > 0:
 		if sys.argv[1] == "mode":
 			comicMode()
 		else:
@@ -85,4 +83,6 @@ if __name__ == "__main__":
 			if len(incompatible) > 0:
 				print "Not compatible files: "
 				for i in incompatible: print i
+	else:
+		print "No input\nexample: comic mode|folder inputs\nsupported types: jpg,png,tiff,jpeg"
 
