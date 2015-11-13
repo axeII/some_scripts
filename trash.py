@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
 
 import os
 import sys
@@ -35,10 +35,14 @@ def move(from_,to_):
 		print "File %s not found" % (os.path.basename(from_))
 
 if __name__ == "__main__":
-	arguments = sys.argv[1:]
-	for file_ in arguments:
-		if os.path.isdir(os.path.join(os.path.abspath(path_),file_)):
-			report("folder",file_)
-		else:
-			report("file",file_)
-		move(os.path.abspath(file_),trash + os.path.basename(file_))
+	if len(sys.argv[1:]) > 0:
+		arguments = sys.argv[1:]
+		for file_ in arguments:
+			if os.path.isdir(os.path.join(os.path.abspath(path_),file_)):
+				report("folder",file_)
+			else:
+				report("file",file_)
+			move(os.path.abspath(file_),trash + os.path.basename(file_))
+	else:
+		 print "No input\nexample: trash /path/to/file.txt"
+
