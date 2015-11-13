@@ -4,29 +4,41 @@ import os
 import sys
 import shutil
 
-arguments = sys.argv[1:]
-path_ = os.path.abspath("./")
+trash = "/Users/Ales/.Trash/"
+path_ = "./"
 
 def report(what,file_):
 	print "Moving %6s: %6s to trash" % (what,file_)
 
+def fileExists(what):
+	if os.path.exists(os.path.abspath(what)):
+		return True
+	else:
+		return False
+
 def move(from_,to_):
-	number = 0
+	num = 0
 	name = to_
 	while os.path.exists(to_):
-		number += 1
-		if not os.path.exists(to_+str(number)):
-			name = to_+str(number)
+		num += 1
+		end = to_.split(".")[-1]
+		begin = to_.split(".")[:-1]
+		orig = ".".join(begin)
+		new = orig + "-" + str(num) + "." + str(end)
+		if not os.path.exists(new):
+			name = new
 			break
 
-	try:
+	if fileExists(from_):
 		shutil.move(from_,name)
-	except IOError as er:
-		print "Error: ",er
-
-for file_ in arguments:
-	if os.path.isdir(os.path.join(path_,file_)):
-		report("folder",file_)
 	else:
-		report("file",file_)
-	move(os.path.abspath(file_),"/Users/Ales/.Trash/" + os.path.basename(file_))
+		print "File %s not found" % (os.path.basename(from_))
+
+if __name__ == "__main__":
+	arguments = sys.argv[1:]
+	for file_ in arguments:
+		if os.path.isdir(os.path.join(os.path.abspath(path_),file_)):
+			report("folder",file_)
+		else:
+			report("file",file_)
+		move(os.path.abspath(file_),trash + os.path.basename(file_))
