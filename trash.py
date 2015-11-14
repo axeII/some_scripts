@@ -8,7 +8,7 @@ trash = "/Users/Ales/.Trash/"
 path_ = "./"
 
 def report(what,file_):
-	print "Moving %6s: %6s to trash" % (what,file_)
+	print "Moving %4s:\t%s to trash" % (what,file_)
 
 def fileExists(what):
 	if os.path.exists(os.path.abspath(what)):
@@ -16,17 +16,26 @@ def fileExists(what):
 	else:
 		return False
 
+def testChar(char,name):
+	what = True	
+	for c in name:
+		if c == char:
+			what = False
+	return what
+
 def move(from_,to_):
 	num = 0
 	name = to_
 	while os.path.exists(to_):
 		num += 1
-		end = to_.split(".")[-1]
-		begin = to_.split(".")[:-1]
-		orig = ".".join(begin)
-		new = orig + "-" + str(num) + "." + str(end)
-		if not os.path.exists(new):
-			name = new
+		if testChar(".",to_):
+			end = to_.split(".")[-1]
+			begin = ".".join(to_.split(".")[:-1])
+			newName = begin + "-" + str(num) + "." + str(end)
+		else:
+			newName = to_ + "-" + str(num)
+		if not os.path.exists(newName):
+			name = newName
 			break
 
 	if fileExists(from_):
