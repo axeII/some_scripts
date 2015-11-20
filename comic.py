@@ -4,7 +4,7 @@ import os
 import sys
 import zipfile
 
-images = ["jpg","jpeg","png","tiff","bmp"]
+images = ["jpg","jpeg","png","tiff","gif","bmp"]
 incompatible = []
 
 def testFile(file_,folder):
