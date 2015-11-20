@@ -17,11 +17,7 @@ def fileExists(what):
 		return False
 
 def testChar(char,name):
-	what = True	
-	for c in name:
-		if c == char:
-			what = False
-	return what
+	return char in name
 
 def move(from_,to_):
 	num = 0
