@@ -38,8 +38,8 @@ def zipArchive(name,dictionary):
 	i = 1 
 	f = zipfile.ZipFile("./" + name,'w')
 	for dic in dictionary:
-		printFile("\rAdding %s ( %3s of %s) to %s" % (shorte(dic),i,len(dictionary),name))
-		f.write(dictionary[dic]+"/"+dic)
+		printFile("\rAdding %s ( %s of %s) to %s" % (shorte(dic),'{0:0>3}'.format(i),len(dictionary),name))
+		f.write(dictionary[dic]+"/"+dic,os.path.basename(dic))
 		i += 1
 	print ""
 	f.close()
