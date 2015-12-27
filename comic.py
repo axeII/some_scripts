@@ -3,6 +3,7 @@
 import os
 import sys
 import zipfile
+import optparse
 
 images = ["jpg","jpeg","png","tiff","gif","bmp"]
 incompatible = []
@@ -34,15 +35,21 @@ def shorte(word):
 		word = "_" + word[-7:]
 	return word
 
-def zipArchive(name,dictionary):
+def zipArchive(name,dictionary,path_):
 	i = 1 
-	f = zipfile.ZipFile("./" + name,'w')
+	f = zipfile.ZipFile(path_ + name + '.cbr','w')
 	for dic in dictionary:
 		printFile("\rAdding %s ( %s of %s) to %s" % (shorte(dic),'{0:0>3}'.format(i),len(dictionary),name))
-		f.write(dictionary[dic]+"/"+dic,os.path.basename(dic))
+		f.write(dictionary[dic]+"/"+dic,name + "/" + dic)
 		i += 1
 	print ""
 	f.close()
+
+def testPath(path_):
+	if path_ is None:
+		return "./"
+	else:
+		return str(path_) + '/'
 
 def comicMode():
 	print "Entering comic mode..."
@@ -68,21 +75,24 @@ def comicMode():
 		else:
 			print "Wrong input.."
 
-	
-if __name__ == "__main__":
-	if len(sys.argv[1:]) > 0:
-		if sys.argv[1] == "mode":
-			comicMode()
+if len(sys.argv[1:]) > 0:
+	if sys.argv[1] == "mode":
+		comicMode()
+	else:
+		if sys.argv[1] in ('-d','-h'):
+			parser = optparse.OptionParser()
+			parser.add_option('-d','--directory',dest='path',help='where you want to save it')
+			(options,args) = parser.parse_args()
+			folders = sys.argv[3:]
 		else:
 			folders = sys.argv[1:]
-			for folder in folders:
-				fileDic = {}
-				fileDic = serachFile(folder,fileDic)
-				name = os.path.basename(folder) + ".cbr"
-				zipArchive(name,fileDic)
-			if len(incompatible) > 0:
-				print "Not compatible files: "
-				for i in incompatible: print i
-	else:
-		print "No input\nexample: comic mode|folder inputs\nsupported types: jpg,png,tiff,jpeg"
+		for folder in folders:
+			fileDic = {}
+			fileDic = serachFile(folder,fileDic)
+			zipArchive(os.path.basename(folder),fileDic,testPath(options.path))
+		if len(incompatible) > 0:
+			print "Not compatible files: "
+			for i in incompatible: print i
+else:
+	print "No input\nexample: comic mode|folder inputs\nsupported types: jpg,png,tiff,jpeg"
 
