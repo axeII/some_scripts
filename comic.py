@@ -1,18 +1,14 @@
 #!/usr/bin/env python
 
-import os
-import sys
+import os,sys
 import zipfile
 import optparse
 
-images = ["jpg","jpeg","png","tiff","gif","bmp"]
+images = ("jpg","jpeg","png","tiff","gif","bmp")
 incompatible = []
 
 def testFile(file_,folder):
-	if os.path.isfile(os.path.join(folder,file_)) and file_.split('.')[-1].lower() in images:
-		return True
-	else:
-		return False
+	return os.path.isfile(os.path.join(folder,file_)) and file_.split('.')[-1].lower() in images
 
 def serachFile(directory,dictionary):
 	files = os.listdir(directory)
@@ -47,9 +43,8 @@ def zipArchive(name,dictionary,path_):
 
 def testPath(path_):
 	if path_ is None:
-		return "./"
-	else:
-		return str(path_) + '/'
+		path_ = '.'
+	return str(path_) + '/'
 
 def comicMode():
 	print "Entering comic mode..."
@@ -66,7 +61,7 @@ def comicMode():
 			os.system("open -a DrawnStrips\ Reader ./*%s.cbr" % (volume))
 		elif order == "S" or order == "s":
 			print "Your current volume is " + str(volume)
-			os.system("ls -lh")
+			OS.SYSTEM("ls -lh")
 		elif order == "E" or order == "e":
 			what = False
 		elif order == "R" or order == "r":
@@ -79,10 +74,10 @@ if len(sys.argv[1:]) > 0:
 	if sys.argv[1] == "mode":
 		comicMode()
 	else:
+		parser = optparse.OptionParser()
+		parser.add_option('-d','--directory',dest='path',help='where you want to save it')
+		(options,args) = parser.parse_args()
 		if sys.argv[1] in ('-d','-h'):
-			parser = optparse.OptionParser()
-			parser.add_option('-d','--directory',dest='path',help='where you want to save it')
-			(options,args) = parser.parse_args()
 			folders = sys.argv[3:]
 		else:
 			folders = sys.argv[1:]
@@ -94,5 +89,5 @@ if len(sys.argv[1:]) > 0:
 			print "Not compatible files: "
 			for i in incompatible: print i
 else:
-	print "No input\nexample: comic mode|folder inputs\nsupported types: jpg,png,tiff,jpeg"
+	print "No input\nmode | argv1 argv2 argvN\nsupported fromats: jpg,png,giff,tiff,jpeg"
 
