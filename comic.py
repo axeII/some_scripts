@@ -47,7 +47,7 @@ def zipArchive(name,dictionary,path_,mng):
 	f = zipfile.ZipFile(path_ + name + '.' + mng,'w')
 	for dic in dictionary:
 		printFile("\rAdding %s ( %s of %s) to %s" % (shorte(dictionary[dic][0]),'{0:0>3}'.format(i),len(dictionary),name))
-		f.write('%s/%s' % (dictionary[dic][1],dictionary[dic][0]),name+'/'+str(dic)+'.'+dictionary[dic][2])
+		f.write('%s/%s' % (dictionary[dic][1],dictionary[dic][0]),'%s/%s.%s' % (name,'{0:0>3}'.format(dic),dictionary[dic][2]))
 		i += 1
 	print ""
 	f.close()
