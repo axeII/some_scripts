@@ -5,21 +5,32 @@ import zipfile
 import optparse
 
 images = ("jpg","jpeg","png","tiff","gif","bmp")
+archives = ('cbr','cbz','cb7','zip')
 incompatible = []
+gnum = 0
 
 def testFile(file_,folder):
 	return os.path.isfile(os.path.join(folder,file_)) and file_.split('.')[-1].lower() in images
 
+def inc():
+	global gnum
+	gnum = gnum+1
+#absolutni cesta jako klic ? 
 def serachFile(directory,dictionary):
-	files = os.listdir(directory)
-	for thing in files:
-		if os.path.isdir(os.path.join(directory,thing)):
-			 serachFile(os.path.join(os.path.abspath(directory),thing),dictionary)
+	stream = os.listdir(directory)
+	for input_ in stream:
+		testDir = os.path.join(os.path.abspath(directory),input_)
+		if os.path.isdir(testDir):
+			 dictionary = serachFile(testDir,dictionary)
 		else:
-			if testFile(thing,directory):
-				dictionary[thing] = os.path.expandvars(os.path.realpath(directory))
+			if testFile(input_,directory):
+				inc()
+				hash_ = gnum
+				type_ = input_.split('.')[-1]
+				pole = [input_,os.path.expandvars(os.path.realpath(directory)),type_]
+				dictionary[hash_] = pole
 			else:	
-				if thing not in incompatible: incompatible.append(thing)
+				if input_ not in incompatible: incompatible.append(input_)
 	return dictionary	
 
 def printFile(what):
@@ -31,12 +42,12 @@ def shorte(word):
 		word = "_" + word[-7:]
 	return word
 
-def zipArchive(name,dictionary,path_):
+def zipArchive(name,dictionary,path_,mng):
 	i = 1 
-	f = zipfile.ZipFile(path_ + name + '.cbr','w')
+	f = zipfile.ZipFile(path_ + name + '.' + mng,'w')
 	for dic in dictionary:
-		printFile("\rAdding %s ( %s of %s) to %s" % (shorte(dic),'{0:0>3}'.format(i),len(dictionary),name))
-		f.write(dictionary[dic]+"/"+dic,name + "/" + dic)
+		printFile("\rAdding %s ( %s of %s) to %s" % (shorte(dictionary[dic][0]),'{0:0>3}'.format(i),len(dictionary),name))
+		f.write('%s/%s' % (dictionary[dic][1],dictionary[dic][0]),name+'/'+str(dic)+'.'+dictionary[dic][2])
 		i += 1
 	print ""
 	f.close()
@@ -45,6 +56,11 @@ def testPath(path_):
 	if path_ is None:
 		path_ = '.'
 	return str(path_) + '/'
+
+def typeControl(type_):
+	return 'cbr' if type_ is None or type_ not in archives else str(type_)
+		
+		
 
 def comicMode():
 	print "Entering comic mode..."
@@ -61,7 +77,7 @@ def comicMode():
 			os.system("open -a DrawnStrips\ Reader ./*%s.cbr" % (volume))
 		elif order == "S" or order == "s":
 			print "Your current volume is " + str(volume)
-			OS.SYSTEM("ls -lh")
+			os.system("ls -lh")
 		elif order == "E" or order == "e":
 			what = False
 		elif order == "R" or order == "r":
@@ -75,19 +91,21 @@ if len(sys.argv[1:]) > 0:
 		comicMode()
 	else:
 		parser = optparse.OptionParser()
-		parser.add_option('-d','--directory',dest='path',help='where you want to save it')
+		parser.add_option('-d','--directory',dest='path',help='save to where')
+		parser.add_option('-m','--manga',dest='mng',help='manga traders')
+		
 		(options,args) = parser.parse_args()
-		if sys.argv[1] in ('-d','-h'):
+		if sys.argv[1] in ('-d','-h','-m'):
 			folders = sys.argv[3:]
 		else:
 			folders = sys.argv[1:]
 		for folder in folders:
 			fileDic = {}
 			fileDic = serachFile(folder,fileDic)
-			zipArchive(os.path.basename(folder),fileDic,testPath(options.path))
+			zipArchive(os.path.basename(folder),fileDic,testPath(options.path),typeControl(options.mng))
 		if len(incompatible) > 0:
 			print "Not compatible files: "
 			for i in incompatible: print i
 else:
-	print "No input\nmode | argv1 argv2 argvN\nsupported fromats: jpg,png,giff,tiff,jpeg"
+	print "usage:  comic mode \n\tcomic -m zip file | comic -d path"
 
