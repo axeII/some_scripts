@@ -12,10 +12,12 @@ gnum = 0
 def testFile(file_,folder):
 	return os.path.isfile(os.path.join(folder,file_)) and file_.split('.')[-1].lower() in images
 
+#this is ugly but it's a script 
 def inc():
 	global gnum
 	gnum = gnum+1
-#absolutni cesta jako klic ? 
+
+#absolute path as a key ?  
 def serachFile(directory,dictionary):
 	stream = os.listdir(directory)
 	for input_ in stream:
@@ -31,7 +33,7 @@ def serachFile(directory,dictionary):
 				dictionary[hash_] = pole
 			else:	
 				if input_ not in incompatible: incompatible.append(input_)
-	return dictionary	
+	return dictionary #return tuple?	
 
 def printFile(what):
 	sys.stdout.write(what)
@@ -47,7 +49,7 @@ def zipArchive(name,dictionary,path_,mng):
 	f = zipfile.ZipFile(path_ + name + '.' + mng,'w')
 	for dic in dictionary:
 		printFile("\rAdding %s ( %s of %s) to %s" % (shorte(dictionary[dic][0]),'{0:0>3}'.format(i),len(dictionary),name))
-		f.write('%s/%s' % (dictionary[dic][1],dictionary[dic][0]),'%s/%s.%s' % (name,'{0:0>3}'.format(dic),dictionary[dic][2]))
+		f.write('%s/%s' % (dictionary[dic][1],dictionary[dic][0]),'%s/%s%s.%s' % (name,name,'_{0:0>3}'.format(dic),dictionary[dic][2]))
 		i += 1
 	print ""
 	f.close()
@@ -60,8 +62,6 @@ def testPath(path_):
 def typeControl(type_):
 	return 'cbr' if type_ is None or type_ not in archives else str(type_)
 		
-		
-
 def comicMode():
 	print "Entering comic mode..."
 	what = True
