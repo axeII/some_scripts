@@ -7,33 +7,28 @@ import optparse
 images = ("jpg","jpeg","png","tiff","gif","bmp")
 archives = ('cbr','cbz','cb7','zip')
 incompatible = []
-gnum = 0
 
 def testFile(file_,folder):
 	return os.path.isfile(os.path.join(folder,file_)) and file_.split('.')[-1].lower() in images
 
-#this is ugly but it's a script 
-def inc():
-	global gnum
-	gnum = gnum+1
 
 #absolute path as a key ?  
-def serachFile(directory,dictionary):
+def serachFile(directory,dictionary,globn):
 	stream = os.listdir(directory)
 	for input_ in stream:
 		testDir = os.path.join(os.path.abspath(directory),input_)
 		if os.path.isdir(testDir):
-			 dictionary = serachFile(testDir,dictionary)
+			 dictionary,globn = serachFile(testDir,dictionary,globn)
 		else:
 			if testFile(input_,directory):
-				inc()
-				hash_ = gnum
+				globn += 1
+				hash_ = globn
 				type_ = input_.split('.')[-1]
 				pole = [input_,os.path.expandvars(os.path.realpath(directory)),type_]
 				dictionary[hash_] = pole
 			else:	
 				if input_ not in incompatible: incompatible.append(input_)
-	return dictionary #return tuple?	
+	return (dictionary,globn) 
 
 def printFile(what):
 	sys.stdout.write(what)
@@ -100,8 +95,9 @@ if len(sys.argv[1:]) > 0:
 		else:
 			folders = sys.argv[1:]
 		for folder in folders:
+			global_ = 0
 			fileDic = {}
-			fileDic = serachFile(folder,fileDic)
+			fileDic,global_ = serachFile(folder,fileDic,global_)
 			zipArchive(os.path.basename(folder),fileDic,testPath(options.path),typeControl(options.mng))
 		if len(incompatible) > 0:
 			print "Not compatible files: "
