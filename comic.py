@@ -11,8 +11,6 @@ incompatible = []
 def testFile(file_,folder):
 	return os.path.isfile(os.path.join(folder,file_)) and file_.split('.')[-1].lower() in images
 
-
-#absolute path as a key ?  
 def serachFile(directory,dictionary,globn):
 	stream = os.listdir(directory)
 	for input_ in stream:
@@ -39,23 +37,31 @@ def shorte(word):
 		word = "_" + word[-7:]
 	return word
 
-def zipArchive(name,dictionary,path_,mng):
+def zipArchive(name,dictionary,path_,isZipfile):
 	i = 1 
-	f = zipfile.ZipFile(path_ + name + '.' + mng,'w')
-	for dic in dictionary:
-		printFile("\rAdding %s ( %s of %s) to %s" % (shorte(dictionary[dic][0]),'{0:0>3}'.format(i),len(dictionary),name))
-		f.write('%s/%s' % (dictionary[dic][1],dictionary[dic][0]),'%s/%s%s.%s' % (name,name,'_{0:0>3}'.format(dic),dictionary[dic][2]))
-		i += 1
-	print ""
-	f.close()
+	if dictionary: 
+		f = zipfile.ZipFile(path_ + name + '.' + typeControl(isZipfile),'w')
+		for dic in dictionary:
+			printFile("\rAdding %8s ( %s of %s) to %s" % (shorte(dictionary[dic][0]),'{0:0>3}'.format(i),len(dictionary),name))
+			f.write('%s/%s' % (dictionary[dic][1],dictionary[dic][0]),'%s/%s%s.%s' % (name,name,'_{0:0>3}'.format(dic),dictionary[dic][2]))
+			i += 1
+		print ""
+		f.close()
 
 def testPath(path_):
 	if path_ is None:
 		path_ = '.'
 	return str(path_) + '/'
 
-def typeControl(type_):
-	return 'cbr' if type_ is None or type_ not in archives else str(type_)
+def extract(files,sourcePath,destionPath):
+	for file_ in files:
+		if file_[-3:] == 'cbr':
+			zip_ref = zipfile.ZipFile(sourcePath + file_, 'r')
+			zip_ref.extractall(destionPath)
+			zip_ref.close()
+
+def typeControl(status):
+	return 'zip' if status else 'cbr'
 		
 def comicMode():
 	print "Entering comic mode..."
@@ -86,19 +92,16 @@ if len(sys.argv[1:]) > 0:
 		comicMode()
 	else:
 		parser = optparse.OptionParser()
-		parser.add_option('-d','--directory',dest='path',help='save to where')
-		parser.add_option('-m','--manga',dest='mng',help='manga traders')
+		parser.add_option('--dir',dest='path',help='save to where')
+		parser.add_option('-z',dest='isZip',help='zipit',action='store_true',default=False)
 		
 		(options,args) = parser.parse_args()
-		if sys.argv[1] in ('-d','-h','-m'):
-			folders = sys.argv[3:]
-		else:
-			folders = sys.argv[1:]
+		folders = [x for x in args]
 		for folder in folders:
 			global_ = 0
 			fileDic = {}
 			fileDic,global_ = serachFile(folder,fileDic,global_)
-			zipArchive(os.path.basename(folder),fileDic,testPath(options.path),typeControl(options.mng))
+			zipArchive(os.path.basename(folder),fileDic,testPath(options.path),options.isZip)
 		if len(incompatible) > 0:
 			print "Not compatible files: "
 			for i in incompatible: print i
