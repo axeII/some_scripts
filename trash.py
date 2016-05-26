@@ -1,13 +1,21 @@
 #!/usr/bin/env python
 
-import os
-import sys
+import os,sys
+from termcolor import colored
 import shutil
 
-trash = "/Users/Ales/.Trash/"
+try:
+    trash = os.environ['TRASH'] + '/'
+except KeyError:
+    print "Local trash file is not set. Check your enviroment settings"
+    sys.exit(12)
 
-def report(what,file_):
-	print "Moving %4s:\t%s to trash" % (what,file_)
+def report(name):
+	if (os.path.isdir(trash+os.path.basename(name))):
+		what = "Folder"
+	else:
+		what = "File  "	 
+	print "\t%s\t%s" % (colored(what,'blue'),colored(name,'green'))
 
 def fileExists(what):
 	return os.path.exists(os.path.abspath(what))
@@ -23,8 +31,7 @@ def fixCase(which,what):
 def move(from_,position,name):
 	if fileExists(from_):
 		if fileExists(name):
-			num = 0
-			case = 0
+			num = case = 0
 			while os.path.exists(position+name):
 				num += 1
 				if testChar('.',name):
@@ -35,18 +42,22 @@ def move(from_,position,name):
 					name = fixCase(case,name) + "-" + str(num)
 				case += 1
 		shutil.move(from_,position+name)
+		return True
 	else:
-		print "File %s not found" % (os.path.basename(from_))
+		return False
 
 if __name__ == "__main__":
 	if len(sys.argv[1:]) > 0:
 		arguments = sys.argv[1:]
+		print "Moving to trash: \n"
 		for file_ in arguments:
-			if os.path.isdir(os.path.abspath(file_)):
-				report("folder",file_)
+			original = os.path.abspath(file_)
+			status = move(os.path.abspath(file_),trash,os.path.basename(file_))
+			if status:
+				report(original)		
 			else:
-				report("file",file_)
-			move(os.path.abspath(file_),trash,os.path.basename(file_))
+				print colored("\tError   %s not found in this directory: %s",'red') % (colored(os.path.basename(file_),'blue'),colored(os.path.dirname(os.path.abspath(file_)),'red'))
+
 	else:
 		 print "No input\nexample: trash /path/to/file.txt"
 
