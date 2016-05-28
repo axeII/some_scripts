@@ -37,10 +37,16 @@ def shorte(word):
 		word = "_" + word[-7:]
 	return word
 
+def clearName(name,control):
+	return name.replace(" ",'_') if control else name
+
+def resultName(defaultOne,optional):
+    return optional if optional else defaultOne
+
 def zipArchive(name,dictionary,path_,isZipfile):
 	i = 1 
 	if dictionary: 
-		f = zipfile.ZipFile(path_ + name + '.' + typeControl(isZipfile),'w')
+		f = zipfile.ZipFile(path_ + clearName(name,isZipfile) + '.' + typeControl(isZipfile),'w')
 		for dic in dictionary:
 			printFile("\rAdding %8s ( %s of %s) to %s" % (shorte(dictionary[dic][0]),'{0:0>3}'.format(i),len(dictionary),name))
 			f.write('%s/%s' % (dictionary[dic][1],dictionary[dic][0]),'%s/%s%s.%s' % (name,name,'_{0:0>3}'.format(dic),dictionary[dic][2]))
@@ -49,9 +55,7 @@ def zipArchive(name,dictionary,path_,isZipfile):
 		f.close()
 
 def testPath(path_):
-	if path_ is None:
-		path_ = '.'
-	return str(path_) + '/'
+    return './' if not path_ else str(path_) + '/'
 
 def extract(files,sourcePath,destionPath):
 	for file_ in files:
@@ -87,24 +91,22 @@ def comicMode():
 		else:
 			print "Wrong input.."
 
-if len(sys.argv[1:]) > 0:
-	if sys.argv[1] == "mode":
-		comicMode()
-	else:
-		parser = optparse.OptionParser()
-		parser.add_option('--dir',dest='path',help='save to where')
-		parser.add_option('-z',dest='isZip',help='zipit',action='store_true',default=False)
-		
-		(options,args) = parser.parse_args()
-		folders = [x for x in args]
-		for folder in folders:
+if __name__ == "__main__":
+	parser = optparse.OptionParser()
+	parser.add_option('-d','--dir',dest='path',help='save to where')
+	parser.add_option('-z',dest='isZip',help='zipit',action='store_true',default=False)
+	parser.add_option('-m',dest='mode',help='start the mode',action='store_true',default=False)
+        parser.add_option('-n','--name',dest='name',help='set file name')
+	(options,args) = parser.parse_args()
+	if options.mode: comicMode()
+	if args:
+		for folder in args:
 			global_ = 0
 			fileDic = {}
 			fileDic,global_ = serachFile(folder,fileDic,global_)
-			zipArchive(os.path.basename(folder),fileDic,testPath(options.path),options.isZip)
+			zipArchive(resultName(os.path.basename(folder),options.name),fileDic,testPath(options.path),options.isZip)
 		if len(incompatible) > 0:
 			print "Not compatible files: "
 			for i in incompatible: print i
-else:
-	print "usage:  comic mode \n\tcomic -m zip file | comic -d path"
-
+	else:
+		print "usage:  comic mode \n\tcomic -m zip file | comic -d path"
