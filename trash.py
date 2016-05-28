@@ -4,11 +4,24 @@ import os,sys
 from termcolor import colored
 import shutil
 
-try:
-    trash = os.environ['TRASH'] + '/'
-except KeyError:
-    print "Local trash file is not set. Check your enviroment settings"
-    sys.exit(12)
+def setTrash():
+    try:
+        trash = os.environ['TRASH'] + '/'
+        return trash 
+    except KeyError:
+        print   "Local trash file is not set. Check your enviroment settings"
+        setEnviroment(raw_input('Do you want to set localTrash? [Y/N]'))
+        sys.exit(12)
+
+trash = setTrash()
+
+def setEnviroment(answer):
+    if answer.lower() in ('yes','y'):
+        with os.environ['HOME'] + "/.Trash" as directory:
+            if not os.path.isdir(directory):
+                os.makedirs(directory)
+            with open(os.environ['HOME']+'.bashrc','a') as locFile:
+                locFile.write('export TRASH=\"$HOME/.Trash\"')
 
 def report(name):
 	if (os.path.isdir(trash+os.path.basename(name))):
