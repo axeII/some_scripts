@@ -67,6 +67,15 @@ def extract(files,sourcePath,destionPath):
 def typeControl(status):
 	return 'zip' if status else 'cbr'
 		
+def zipController(folder_,name_,fileDic_,path_,zipIt,zipOnly):
+    if zipIt and zipOnly:
+        zipArchive(resultName(os.path.basename(folder_),name_),fileDic_,testPath(path_),True)
+    elif zipIt and not zipOnly:
+        zipArchive(resultName(os.path.basename(folder_),name_),fileDic_,testPath(path_),True)
+        zipArchive(resultName(os.path.basename(folder_),name_),fileDic_,testPath(path_),False)
+    else:
+        zipArchive(resultName(os.path.basename(folder_),name_),fileDic_,testPath(path_),False)
+
 def comicMode():
 	print "Entering comic mode..."
 	what = True
@@ -98,6 +107,8 @@ if __name__ == "__main__":
 	parser.add_option('-z',dest='isZip',help='zipit',action='store_true',default=False)
 	parser.add_option('-m',dest='mode',help='start the mode',action='store_true',default=False)
         parser.add_option('-n','--name',dest='name',help='set file name')
+        parser.add_option('-t',dest='trash',help='Do you want to trash file after compresion?',action='store_true',default=False)
+        parser.add_option('-o',dest='zipOnly',help='zip only',action='store_true',default=False)
 	(options,args) = parser.parse_args()
 	if options.mode: comicMode()
 	if args:
@@ -105,9 +116,9 @@ if __name__ == "__main__":
 			global_ = 0
 			fileDic = {}
 			fileDic,global_ = serachFile(folder,fileDic,global_)
-                        if options.isZip:
-                            zipArchive(resultName(os.path.basename(folder),options.name),fileDic,testPath(options.path),True)
-			zipArchive(resultName(os.path.basename(folder),options.name),fileDic,testPath(options.path),False)
+                        zipController(folder,options.name,fileDic,options.path,options.isZip,options.zipOnly)
+                        if options.trash:
+                            os.system("trash " + os.path.abspath(folder.replace(' ','\ '))) 
 		if len(incompatible) > 0:
 			print "Not compatible files: "
 			for i in incompatible: print i
