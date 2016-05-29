@@ -85,6 +85,7 @@ def comicMode():
 			os.system("ls -lh")
 		elif order == "E" or order == "e":
 			what = False
+                        print "Goodbye..."
 		elif order == "R" or order == "r":
 			print "Reseting from %s to 0" % (volume)
 			volume = 0
@@ -104,7 +105,9 @@ if __name__ == "__main__":
 			global_ = 0
 			fileDic = {}
 			fileDic,global_ = serachFile(folder,fileDic,global_)
-			zipArchive(resultName(os.path.basename(folder),options.name),fileDic,testPath(options.path),options.isZip)
+                        if options.isZip:
+                            zipArchive(resultName(os.path.basename(folder),options.name),fileDic,testPath(options.path),True)
+			zipArchive(resultName(os.path.basename(folder),options.name),fileDic,testPath(options.path),False)
 		if len(incompatible) > 0:
 			print "Not compatible files: "
 			for i in incompatible: print i
