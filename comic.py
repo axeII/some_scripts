@@ -43,8 +43,8 @@ def clearName(name,control):
 def resultName(defaultOne,optional):
     return optional if optional else defaultOne
 
-def zipArchive(name,dictionary,path_,isZipfile):
-	i = 1 
+def zipArchive(name,dictionary,path_,isZipfile,i,runIt):
+    if runIt:
 	if dictionary: 
 		f = zipfile.ZipFile(path_ + clearName(name,isZipfile) + '.' + typeControl(isZipfile),'w')
 		for dic in dictionary:
@@ -68,13 +68,8 @@ def typeControl(status):
 	return 'zip' if status else 'cbr'
 		
 def zipController(folder_,name_,fileDic_,path_,zipIt,zipOnly):
-    if zipIt and zipOnly:
-        zipArchive(resultName(os.path.basename(folder_),name_),fileDic_,testPath(path_),True)
-    elif zipIt and not zipOnly:
-        zipArchive(resultName(os.path.basename(folder_),name_),fileDic_,testPath(path_),True)
-        zipArchive(resultName(os.path.basename(folder_),name_),fileDic_,testPath(path_),False)
-    else:
-        zipArchive(resultName(os.path.basename(folder_),name_),fileDic_,testPath(path_),False)
+    zipArchive(resultName(os.path.basename(folder_),name_),fileDic_,testPath(path_),zipIt,1,zipIt)
+    zipArchive(resultName(os.path.basename(folder_),name_),fileDic_,testPath(path_),False,1,not zipOnly)
 
 def comicMode():
 	print "Entering comic mode..."
