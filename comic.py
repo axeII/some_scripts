@@ -11,6 +11,9 @@ incompatible = []
 def testFile(file_,folder):
 	return os.path.isfile(os.path.join(folder,file_)) and file_.split('.')[-1].lower() in images
 
+def recognizeFile(file_):
+    pass
+
 def serachFile(directory,dictionary,globn):
 	stream = os.listdir(directory)
 	for input_ in stream:
@@ -104,18 +107,20 @@ if __name__ == "__main__":
         parser.add_option('-n','--name',dest='name',help='set file name')
         parser.add_option('-t',dest='trash',help='Do you want to trash file after compresion?',action='store_true',default=False)
         parser.add_option('-o',dest='zipOnly',help='zip only',action='store_true',default=False)
-	(options,args) = parser.parse_args()
+	(options,args),trashers = (parser.parse_args(),list())
 	if options.mode: comicMode()
 	if args:
-		for folder in args:
-			global_ = 0
-			fileDic = {}
+                for folder in args:
+                        global_,fileDic = (0,dict())
 			fileDic,global_ = serachFile(folder,fileDic,global_)
                         zipController(folder,options.name,fileDic,options.path,options.isZip,options.zipOnly)
                         if options.trash:
-                            os.system("trash " + os.path.abspath(folder.replace(' ','\ '))) 
-		if len(incompatible) > 0:
+                            trashers.append(folder)
+                if trashers:
+                    for trasher in trashers:
+                        os.system("trash " + os.path.abspath(trasher.replace(' ','\ ').replace(')','\)').replace('(','\('))) 
+		if incompatible:
 			print "Not compatible files: "
-			for i in incompatible: print i
+			for inc in incompatible: print inc
 	else:
 		print "usage:  comic mode \n\tcomic -m zip file | comic -d path"
