@@ -3,6 +3,7 @@
 import os,sys
 import zipfile
 import optparse
+import magic
 
 images = ("jpg","jpeg","png","tiff","gif","bmp")
 archives = ('cbr','cbz','cb7','zip')
@@ -12,24 +13,27 @@ def testFile(file_,folder):
 	return os.path.isfile(os.path.join(folder,file_)) and file_.split('.')[-1].lower() in images
 
 def recognizeFile(file_):
-    pass
+    type_ = magic.from_file(file_,mime=True).replace('image/','')
+    if not type_ in ('jpeg','png'):
+        return None
+    return type_ if type_ else file_.split('.')[-1]
 
-def serachFile(directory,dictionary,globn):
+def serachFile(directory,dictionary,num_):
 	stream = os.listdir(directory)
 	for input_ in stream:
 		testDir = os.path.join(os.path.abspath(directory),input_)
 		if os.path.isdir(testDir):
-			 dictionary,globn = serachFile(testDir,dictionary,globn)
+			 dictionary,num_ = serachFile(testDir,dictionary,num_)
 		else:
 			if testFile(input_,directory):
-				globn += 1
-				hash_ = globn
-				type_ = input_.split('.')[-1]
-				pole = [input_,os.path.expandvars(os.path.realpath(directory)),type_]
-				dictionary[hash_] = pole
+                                os.chmod(os.path.join(directory,input_),436)
+				num_ += 1
+				type_ = recognizeFile(os.path.join(directory,input_)) 
+                                pole = [input_,os.path.expandvars(os.path.realpath(directory)),type_]
+				dictionary[num_] = pole
 			else:	
 				if input_ not in incompatible: incompatible.append(input_)
-	return (dictionary,globn) 
+	return (dictionary,num_) 
 
 def printFile(what):
 	sys.stdout.write(what)
