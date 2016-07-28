@@ -30,44 +30,23 @@ def turn(action,device):
     subprocess.call(command,shell=True)
 
 def betterPrint(data):
-
-    def deSerialize(arrRepresentation):
-        arrRepresentation = arrRepresentation[1:len(arrRepresentation) - 2]
-        return [x.replace("\'", "") for x in arrRepresentation.split(',')]
-
-    def arrayDict(arr):
-        data = {}
-        header = []
-
-        for el in arr:
-            data[el] = []
-            header.append(el)
-            if el.find("\n") != -1:
-                break
-
-        for i in range(len(header), len(header)):
-            for j in range(len(header)):
-                data[header[j]] = arr[i + j]
-
-        return data
-
-
+    # use xml output to better print
     out = [d for d in data.replace('SECURITY (auth/unicast/group)','SECURITY').split(' ') if d != '']
     print ' '.join(out)
-    #print arrayDict(deSerialize(data))
 
 def doAction(device,opt,args):
+
     def switchControl(options): 
-        return False if options.optScan and options.optConnect and options.optLogout else True 
+        return False if all(x for x in vars(opt).itervalues()) else True
 
     if switchControl(opt):
 	if 'on' in args or 'off' in args:
             turn(args[0],device)
 	if opt.optConnect:
-		if exists(args[1]):
+		if exists(args[0]):
 			password = getpass.getpass("Password: ")
-			connect(args[1],device,password)
-			if is_connected(args[1]):
+			connect(args[0],device,password)
+			if is_connected(args[0]):
 				print "Connection Success..."
 		else:
 			print "Network not found..."
@@ -78,12 +57,11 @@ def doAction(device,opt,args):
 		betterPrint(subprocess.check_output("airport -s",shell=True)) #too long timing load before exec.
     else:
         print "Error input..."
-        sys.exit(32)
 
 if __name__ == "__main__":
-        (options,args) = getParser("usage: %prog [option] on off")
-        sys.exit
-	if args or options.optScan or options.optLogout or options.optConnect:
-                doAction('en0',options,args)
-	else:
-            print "No input see the help"
+    (options,args) = getParser("Usage: %prog [option] on off")
+    options_dict = vars(options)
+    if args or any(x for x in options_dict.itervalues()): 
+            doAction('en0',options,args)
+    else:
+        print "No input see the help"
