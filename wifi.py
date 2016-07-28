@@ -42,13 +42,13 @@ def doAction(device,opt,args):
 	if 'on' in args or 'off' in args:
             turn(args[0],device)
 	if opt.optConnect:
-		if exists(args[0]):
-			password = getpass.getpass("Password: ")
-			connect(args[0],device,password)
-			if is_connected(args[0]):
-				print "Connection Success..."
-		else:
-			print "Network not found..."
+            if exists(opt.optConnect):
+                password = getpass.getpass("Enter %s password: " % opt.optConnect)
+                connect(opt.optConnect,device,password)
+                if is_connected(opt.optConnect):
+                    print "Connection Success..."
+            else:
+                print "Network not found..."
         if opt.optLogout:
 	    subprocess.call("sudo airport -z", shell=True)
 	if opt.optScan:
