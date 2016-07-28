@@ -30,9 +30,8 @@ def turn(action,device):
     subprocess.call(command,shell=True)
 
 def betterPrint(data):
-    # use xml output to better print
-    out = [d for d in data.replace('SECURITY (auth/unicast/group)','SECURITY').split(' ') if d != '']
-    print ' '.join(out)
+    #use xml format to print data better
+    print data
 
 def doAction(device,opt,args):
 
@@ -53,8 +52,8 @@ def doAction(device,opt,args):
         if opt.optLogout:
 	    subprocess.call("sudo airport -z", shell=True)
 	if opt.optScan:
-		print "\t List of all wifi spots: "
-		betterPrint(subprocess.check_output("airport -s",shell=True)) #too long timing load before exec.
+		print "List of all wifi spots: "
+		betterPrint(subprocess.check_output("airport -s",shell=True)) 
     else:
         print "Error input..."
 
