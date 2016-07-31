@@ -29,9 +29,11 @@ def turn(action,device):
     print "Turning wifi " + str(action)
     subprocess.call(command,shell=True)
 
-def betterPrint(data):
-    #use xml format to print data better
-    print data
+def returnScanData(data):
+    while True:
+        data = subprocess.check_output("airport -s",shell=True) 
+        if data: break
+    return data
 
 def doAction(device,opt,args):
 
@@ -53,7 +55,7 @@ def doAction(device,opt,args):
 	    subprocess.call("sudo airport -z", shell=True)
 	if opt.optScan:
 		print "List of all wifi spots: "
-		betterPrint(subprocess.check_output("airport -s",shell=True)) 
+                print returnScanData('')
     else:
         print "Error input..."
 
