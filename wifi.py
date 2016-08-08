@@ -10,6 +10,7 @@ def getParser(usage):
     parser.add_option('-c','--connect',dest='optConnect',help='Which wifi you want to connect')
     parser.add_option('-l','--logout',dest='optLogout',help='logout from wifi network',action='store_true')
     parser.add_option('-s','--scan',dest='optScan',help='scan local network area',action='store_true')
+    parser.add_option('-i',dest='infoList',help='List hardware info',action='store_true')
     return parser.parse_args()
 
 def is_connected(keyword):
@@ -56,6 +57,8 @@ def doAction(device,opt,args):
 	if opt.optScan:
 		print "List of all wifi spots: "
                 print returnScanData('')
+        if opt.infoList:
+            print subprocess.check_output('networksetup -listallhardwareports',shell=True)
     else:
         print "Error input..."
 
