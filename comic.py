@@ -4,6 +4,7 @@ import os,sys
 import zipfile
 import optparse
 import magic
+from subprocess import call
 
 images = ("jpg","jpeg","png","tiff","gif","bmp")
 archives = ('cbr','cbz','cb7','zip')
@@ -47,8 +48,10 @@ def shorte(word):
 def clearName(name,control):
 	return name.replace(" ",'_') if control else name
 
-def resultName(defaultOne,optional):
-    return optional if optional else defaultOne
+def resultName(default_name,optional):
+    if default_name.endswith('/'): default_name = default_name[:-1]
+    default_name = ''.join(default_name.split('/')[-1])
+    return optional if optional else default_name
 
 def zipArchive(name,dictionary,path_,isZipfile,i,runIt):
     if runIt:
@@ -74,9 +77,10 @@ def extract(files,sourcePath,destionPath):
 def typeControl(status):
 	return 'zip' if status else 'cbr'
 		
-def zipController(folder_,name_,fileDic_,path_,zipIt,zipOnly):
-    zipArchive(resultName(os.path.basename(folder_),name_),fileDic_,testPath(path_),zipIt,1,zipIt)
-    zipArchive(resultName(os.path.basename(folder_),name_),fileDic_,testPath(path_),False,1,not zipOnly)
+def zipController(folder_,opt_name,fileDic_,path_,zipIt,zipOnly):
+    name_file = resultName(folder_,opt_name)
+    zipArchive(name_file,fileDic_,testPath(path_),zipIt,1,zipIt)
+    zipArchive(name_file,fileDic_,testPath(path_),False,1,not zipOnly)
 
 def comicMode():
 	print "Entering comic mode..."
@@ -87,13 +91,13 @@ def comicMode():
 		order = raw_input('Next[N],Previos[P],Status[S],Reset[R],End[E]: ')
 		if order == "N" or order == "n":
 			volume += 1
-			os.system("open -a DrawnStrips\ Reader ./*%s.cbr" % (volume))
+		        call("open -a DrawnStrips\ Reader ./*%s.cbr" % (volume),shell=True)
 		elif order == "P" or order == "p":
 			volume -= 1
-			os.system("open -a DrawnStrips\ Reader ./*%s.cbr" % (volume))
+			call("open -a DrawnStrips\ Reader ./*%s.cbr" % (volume),shell=True)
 		elif order == "S" or order == "s":
 			print "Your current volume is " + str(volume)
-			os.system("ls -lh")
+			call("ls -lh",shell=True)
 		elif order == "E" or order == "e":
 			what = False
                         print "Goodbye..."
@@ -104,27 +108,25 @@ def comicMode():
 			print "Wrong input.."
 
 if __name__ == "__main__":
-	parser = optparse.OptionParser()
-	parser.add_option('-d','--dir',dest='path',help='save to where')
-	parser.add_option('-z',dest='isZip',help='zipit',action='store_true',default=False)
-	parser.add_option('-m',dest='mode',help='start the mode',action='store_true',default=False)
-        parser.add_option('-n','--name',dest='name',help='set file name')
-        parser.add_option('-t',dest='trash',help='Do you want to trash file after compresion?',action='store_true',default=False)
-        parser.add_option('-o',dest='zipOnly',help='zip only',action='store_true',default=False)
-	(options,args),trashers = (parser.parse_args(),list())
-	if options.mode: comicMode()
-	if args:
-                for folder in args:
-                        global_,fileDic = (0,dict())
-			fileDic,global_ = serachFile(folder,fileDic,global_)
-                        zipController(folder,options.name,fileDic,options.path,options.isZip,options.zipOnly)
-                        if options.trash:
-                            trashers.append(folder)
-                if trashers:
-                    for trasher in trashers:
-                        os.system("trash " + os.path.abspath(trasher.replace(' ','\ ').replace(')','\)').replace('(','\('))) 
-		if incompatible:
-			print "Not compatible files: "
-			for inc in incompatible: print inc
-	else:
-		print "usage:  comic mode \n\tcomic -m zip file | comic -d path"
+    parser = optparse.OptionParser()
+    parser.add_option('-d','--dir',dest='path',help='save to where')
+    parser.add_option('-z',dest='isZip',help='zipit',action='store_true',default=False)
+    parser.add_option('-m',dest='mode',help='start the mode',action='store_true',default=False)
+    parser.add_option('-n','--name',dest='name',help='set file name')
+    parser.add_option('-t',dest='trash',help='Do you want to trash file after compresion?',action='store_true',default=False)
+    parser.add_option('-o',dest='zipOnly',help='zip only',action='store_true',default=False)
+    (options,args),trashers = (parser.parse_args(),list())
+    if options.mode: comicMode()
+    if args:
+        for folder in args:
+            global_,fileDic = (0,dict())
+            fileDic,global_ = serachFile(folder,fileDic,global_)
+            zipController(folder,options.name,fileDic,options.path,options.isZip,options.zipOnly)
+            if options.trash:
+                trashers.append(folder)
+        if trashers:
+            for trasher in trashers:
+                call("trash " + os.path.abspath(trasher.replace(' ','\ ').replace(')','\)').replace('(','\(')),shell=True) 
+        print "Not compatible files:",','.join([comp for comp in incompatible])
+    else:
+        print "usage:  comic mode \n\tcomic -m zip file | comic -d path"
