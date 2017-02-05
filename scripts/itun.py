@@ -1,54 +1,54 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
+
+import optparse
 import sys
 import shutil
 import os
 
-def isEmpty(args):
-	if not args:
-		return True
-
 def isMovie(movie):
-	state = False
-	if os.path.isfile(movie) and movie.endswith("mp4"):
-		state = True
-	return state
+    return os.path.isfile(movie) and movie.endswith('.mp4')
 
 def aprove(file_,destination):
-	if os.path.isfile(file_):
-		return True
-	else:
-		return False
+    return os.path.isfile(file_) and file_ not in destination
 
 def create():
-	path = "/Volumes/Macintosh SD/Movies/iTunes Movies/"
-	choice = raw_input('Do you want set path?[yes/no]: ')
-	if choice == "yes" or choice == "y" or choice == "Y":
-		path = raw_input('Set path to move file: ')
-	return path			
+    return raw_input('Set path to move file: ') if raw_input('Do you want set path?[yes/no]: ') in ('yes','y') else '/Volumes/Macintosh SD/Movies/iTunes Movies/'
 
 def move(what,where):
-	if aprove(what,where):		
-		print "%s to %s \nMoving..." % (what,where)
-		shutil.move(what,where)
+    if aprove(what,where):
+        print "%s to %s \nMoving..." % (what,where)
+        shutil.move(what,where)
 
 def link(src,dst):
-	if aprove(src,dst):	
-		print "Linking..."
-		os.symlink(src,dst)
+    #map(lambda x: x,(os.symlink(src,dst),print "Linking...")) if aprove(src,dst)
+    if os.path.exists(os.path.abspath(src)):
+        print "Linking..."
+        os.symlink(src,dst)
+
+def music(file_):
+    if aprove(file_,"/Volumes/Macintosh SD/Music"):
+        move(file_,"/Volumes/Macintosh SD/Music")
+        link("/Volumes/Macintosh SD/Music/"+os.path.basename(file_),"/Users/ales/Music/" + os.path.basename(file_))
 
 if __name__ == "__main__":
-	movies = sys.argv[1:]
-	if not isEmpty(movies):
-		for movie in movies:
-			if isMovie(movie):
-				path = create()
-				move(os.path.abspath(movie),path+movie)
-				link(path+movie,os.path.abspath(movie))
-				print "I have successfuly itun " + movie		
-			else:
-				print "Not found " + movie
+    parser = optparse.OptionParser()
+    parser.add_option('-i','--itun',dest='itune',action='store_true',help='set itun')
+    parser.add_option('-m','--musc',dest='music',action='store_true',help='set music')
+    options,args = parser.parse_args()
+    if args:
+        if options.itune:
+            for m_ in args:
+                if isMovie(m_):
+	            path = create()
+		    move(os.path.abspath(movie),path+movie)
+		    link(path+movie,os.path.abspath(movie))
+		    print "I have successfuly itun " + movie
+                else:
+                    print "Not found supported movie: " + movie
+        elif options.music:
+            for m_ in args:
+                music(os.path.abspath(m_))
 	else:
-		print "Usage:\t itun movie.mp4 | movieTwo.mp4"
-
-
-
+            print "Error wrong input"
+    else:
+        print "no arguments"

@@ -14,10 +14,11 @@ def parseArgs():
         parser.add_option('-f',dest='fileN',help='Exact name you want each file name')
         parser.add_option('-n',dest='noExe',help='Dry print just print all action not execute',action='store_true')
         parser.add_option('-c',dest='clean',help='acts like mv',action='store_true')
+        parser.add_option('-e',dest='endn',help='end name',action='store_true')
 	return parser.parse_args()
 
 def filterArgs(args,options):
-    field,paths = (list(),map(lambda x:dirname(realpath(x)),args)) 
+    field,paths = (list(),map(lambda x:dirname(realpath(x)),args))
     [field.append(os.listdir(a) if isdir(a) and not options.sDir else [a]) for a in args]
     return (list(itertools.chain.from_iterable(field)),(realpath(args[0])) if all(x==paths[0] for x in paths) else sys.exit('Some paths are diferent'),options)
 

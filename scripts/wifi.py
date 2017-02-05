@@ -24,6 +24,9 @@ def connect(name,device,password):
 	command = "networksetup -setairportnetwork %s %s %s" % (device,name,password)
 	print "Connecting to %s network..." % name
         subprocess.call(command,shell=True)
+        #subproces.call("networksetup -addpreferredwirelessnetworkatindex %s %s INDEX_NUMBER SECURITY_OF_WIRELESS_NETWORK %s"%(device,name,password),shell=True)
+        #auto add if dont wana delete it
+        #networksetup -removepreferredwirelessnetwork en0 SSID_OF_NETWORK
 
 def turn(action,device):
     command = "networksetup -setairportpower %s %s" % (device,action)
