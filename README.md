@@ -43,3 +43,20 @@ Options:
   -f FILEN    Exact name you want each file name
   -n          Dry print just print all action not execute
   -c          acts like mv
+
+### comic
+
+creates from folder of pictures cbr files - easy to read for comics or manga    
+input folder -> creats cbr file same name as folder  
+```comic ./Comic```
+
+Usage: comic [options]
+
+Options:
+  -h, --help            show this help message and exit
+  -d PATH, --dir=PATH   save to where
+  -z                    zipit
+  -m                    start the mode
+  -n NAME, --name=NAME  set file name
+  -t                    Do you want to trash file after compresion?
+  -o                    zip only
