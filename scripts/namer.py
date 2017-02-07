@@ -47,7 +47,7 @@ def nameThoseFiles(files,tPath,option):
             print "renaming from %s to %s" % (files[i],basename(new))
         else:
             try:
-                os.rename(join(dirname(tPath) if not isdir(tPath) else tPath,files[i]),new)
+                os.rename(join(dirname(tPath) if isfile(tPath) or option.sDir else tPath,files[i]),new)
             except Exception as e:
                 print 'Ups wrong naming: ',e
 
